@@ -2,7 +2,10 @@
 	"manifest_version": 2,
 	"name": "TrendingArticles",
 	"description": "Implements trending articles.",
-	"author": ["[https://wikux.org Wikux]"],
+	"author": [
+		"[https://wolfite.dev Wolfite]",
+		"[https://obby.wiki The Obby Wiki]"
+	],
 	"version": "0.1.0",
 	"license-name": "GPL-3.0-or-later",
 	"url": "https://github.com/wikux/mediawiki-extensions-TrendingArticles",
