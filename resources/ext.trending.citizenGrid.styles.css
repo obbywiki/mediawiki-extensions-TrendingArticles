@@ -3,11 +3,11 @@
 }
 
 .trending-grid__heading {
-	margin-bottom: var(--space-md);
-	color: var(--color-emphasized);
-	font-size: var(--font-size-xx-large);
-	font-weight: var(--font-weight-semi-bold);
-	line-height: var(--line-height-xx-large);
+	margin-bottom: var( --space-md );
+	color: var( --color-emphasized );
+	font-size: var( --font-size-xx-large );
+	font-weight: var( --font-weight-semi-bold );
+	line-height: var( --line-height-xx-large );
 }
 
 .trending-grid__list {
