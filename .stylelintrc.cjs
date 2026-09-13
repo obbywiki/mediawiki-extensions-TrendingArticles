@@ -9,6 +9,7 @@ module.exports = {
 	ignoreFiles: [
 		'coverage/**',
 		'node_modules/**',
-		'resources/dist/**'
+		'resources/dist/**',
+        'vendor/**'
 	]
 };
