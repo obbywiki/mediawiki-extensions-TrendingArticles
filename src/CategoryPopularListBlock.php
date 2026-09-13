@@ -16,7 +16,7 @@ class CategoryPopularListBlock {
 		$limit = $config->getCategoryLimit();
 
 		$pages = TrendingQuery::getTopPagesInCategory( $category, $limit );
-		
+
 		if ( $pages === [] ) {
 			return '';
 		}

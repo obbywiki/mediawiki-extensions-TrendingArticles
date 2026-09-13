@@ -18,6 +18,7 @@ class PageViewFooterItem {
 	 * footer-info via SkinComponentFooter (MW 1.35-1.46)
 	 *
 	 * @param Skin $skin
+	 * @param string $key
 	 * @param array &$footerItems
 	 */
 	public static function addToFooterInfoLinks( Skin $skin, string $key, array &$footerItems ): void {

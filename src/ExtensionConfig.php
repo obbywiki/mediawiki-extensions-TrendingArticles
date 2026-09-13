@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Trending;
 use MediaWiki\Config\ServiceOptions;
 
 // this might not need to be an independent service in the future
+
 class ExtensionConfig {
 	public const SERVICE_NAME = 'TrendingConfig';
 

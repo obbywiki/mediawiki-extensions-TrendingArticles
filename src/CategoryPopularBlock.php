@@ -38,7 +38,7 @@ class CategoryPopularBlock {
 		if ( !( $title instanceof Title ) || !self::categoryHasIntroText( $title ) || !self::usesGridRenderer( $skin ) || self::$styles_registered ) {
 			return;
 		}
-		
+
 		$out->addModuleStyles( [ self::STYLE_MODULE ] );
 
 		// fallback

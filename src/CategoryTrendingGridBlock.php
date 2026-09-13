@@ -92,6 +92,7 @@ class CategoryTrendingGridBlock {
 	}
 
 	/**
+	 * @param Title $title
 	 * @param array{source:string,width:int,height:int}|null $thumbnail
 	 */
 	private static function renderThumb( Title $title, ?array $thumbnail ): string {
