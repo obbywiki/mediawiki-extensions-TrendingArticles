@@ -1,0 +1,17 @@
+{
+  "name": "mediawiki-extensions-Trending",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "stylelint": "^17.15.0",
+    "stylelint-config-wikimedia": "^0.19.4"
+  }
+}
