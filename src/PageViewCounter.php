@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Trending;
 
-use LogicException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\MediaWikiServices;
@@ -15,23 +14,27 @@ class PageViewCounter {
 	public const DAILY_RETENTION_DAYS = 7;
 
 	/**
-	 * returns the stored view count for a title using the configured data source
+	 * returns the stored view count for a title
 	 */
 	public static function getPageViewCount( Title $title ): int {
-		$dataSource = self::getDataSource();
+		$pageId = (int)$title->getArticleID();
 
-		if ( $dataSource === 'Trending' ) {
-			return self::getTrendingCount( $title );
+		if ( $pageId <= 0 ) {
+			return 0;
 		}
 
-		if ( $dataSource === 'HitCounters' ) {
-			if ( class_exists( \HitCounters\HitCounters::class ) ) {
-				return (int)( \HitCounters\HitCounters::getCount( $title ) ?? 0 );
-			}
-			throw new LogicException( 'HitCounters data source selected but HitCounters is not installed.' );
-		}
+		$services = MediaWikiServices::getInstance();
+		$db_provider = $services->getConnectionProvider();
+		$dbr = $db_provider->getReplicaDatabase();
 
-		throw new LogicException( 'Invalid page view count data source: ' . $dataSource );
+		$row = $dbr->newSelectQueryBuilder()
+			->select( [ 'tp_count' ] )
+			->from( 'trending_pageview' )
+			->where( [ 'tp_page_id' => $pageId ] )
+			->caller( __METHOD__ )
+			->fetchRow();
+
+		return $row ? (int)$row->tp_count : 0;
 	}
 
 	/**
@@ -155,15 +158,6 @@ class PageViewCounter {
 		);
 	}
 
-	public static function getDataSource(): string {
-		$services = MediaWikiServices::getInstance();
-
-		/** @var ExtensionConfig $config */
-		$config = $services->getService( ExtensionConfig::SERVICE_NAME );
-
-		return $config->getDataSource();
-	}
-
 	/**
 	 * determines whether or not to count a page view
 	 */
@@ -177,7 +171,7 @@ class PageViewCounter {
 			return false;
 		}
 
-		if ( $user->isAllowed( 'bot' ) || $user->isAllowed( 'hitcounter-exempt' ) ) {
+		if ( $user->isAllowed( 'bot' ) ) {
 			return false;
 		}
 
@@ -200,26 +194,5 @@ class PageViewCounter {
 		$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 
 		return self::shouldCountPageView( $wikiPage, $context->getUser() );
-	}
-
-	private static function getTrendingCount( Title $title ): int {
-		$pageId = (int)$title->getArticleID();
-
-		if ( $pageId <= 0 ) {
-			return 0;
-		}
-
-		$services = MediaWikiServices::getInstance();
-		$db_provider = $services->getConnectionProvider();
-		$dbr = $db_provider->getReplicaDatabase();
-
-		$row = $dbr->newSelectQueryBuilder()
-			->select( [ 'tp_count' ] )
-			->from( 'trending_pageview' )
-			->where( [ 'tp_page_id' => $pageId ] )
-			->caller( __METHOD__ )
-			->fetchRow();
-
-		return $row ? (int)$row->tp_count : 0;
 	}
 }

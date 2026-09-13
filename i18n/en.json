@@ -5,7 +5,6 @@
 		]
 	},
 
-	"trending-category-popular-heading": "Popular pages",
 	"trending-category-trending-heading": "Trending pages",
 	"trending-page-info-viewcount": "Page views",
 	"trending-viewcount": "This page has been viewed {{PLURAL:$1|1 time|$1 times}}.",

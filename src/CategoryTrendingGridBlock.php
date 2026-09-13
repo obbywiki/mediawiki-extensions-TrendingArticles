@@ -13,8 +13,8 @@ class CategoryTrendingGridBlock {
 		$services = MediaWikiServices::getInstance();
 		/** @var ExtensionConfig $config */
 		$config = $services->getService( ExtensionConfig::SERVICE_NAME );
-		$limit = $config->getCitizenLimit();
-		$thumb_size = $config->getCitizenThumbSize();
+		$limit = $config->getCategoryLimit();
+		$thumb_size = $config->getThumbSize();
 
 		$pages = TrendingQuery::getTopPagesInCategory(
 			$category,
@@ -33,21 +33,21 @@ class CategoryTrendingGridBlock {
 			$page_id = $title->getArticleID();
 			$page_media = $media[$page_id] ?? [];
 
-			$thumb_html = self::renderThumb( $title, $page_media['thumbnail'] ?? null );
+			$thumb_html = self::renderThumb( $page_media['thumbnail'] ?? null );
 			$body_parts = [ self::renderTitle( $title, $page_media['display_title'] ?? null ) ];
 
 			$shortdesc = $page_media['shortdesc'] ?? '';
 			if ( is_string( $shortdesc ) && $shortdesc !== '' ) {
 				$body_parts[] = Html::element(
 					'span',
-					[ 'class' => 'trending-grid__shortdesc' ],
+					[ 'class' => 'cdx-card__text__description' ],
 					$shortdesc
 				);
 			}
 
 			$card_body = Html::rawElement(
 				'span',
-				[ 'class' => 'trending-grid__body' ],
+				[ 'class' => 'cdx-card__text' ],
 				implode( '', $body_parts )
 			);
 
@@ -57,7 +57,7 @@ class CategoryTrendingGridBlock {
 				Html::rawElement(
 					'a',
 					[
-						'class' => 'trending-grid__card',
+						'class' => 'cdx-card cdx-card--is-link trending-grid__card',
 						'href' => $title->getLinkURL(),
 					],
 					$thumb_html . $card_body
@@ -92,14 +92,13 @@ class CategoryTrendingGridBlock {
 	}
 
 	/**
-	 * @param Title $title
 	 * @param array{source:string,width:int,height:int}|null $thumbnail
 	 */
-	private static function renderThumb( Title $title, ?array $thumbnail ): string {
+	private static function renderThumb( ?array $thumbnail ): string {
 		if ( $thumbnail !== null ) {
 			return Html::rawElement(
 				'span',
-				[ 'class' => 'trending-grid__thumb' ],
+				[ 'class' => 'trending-grid__media' ],
 				Html::element( 'img', [
 					'class' => 'trending-grid__image',
 					'src' => (string)$thumbnail['source'],
@@ -115,7 +114,7 @@ class CategoryTrendingGridBlock {
 		return Html::element(
 			'span',
 			[
-				'class' => 'trending-grid__thumb trending-grid__thumb--placeholder',
+				'class' => 'trending-grid__media trending-grid__media--placeholder',
 				'aria-hidden' => 'true',
 			],
 			''
@@ -134,7 +133,7 @@ class CategoryTrendingGridBlock {
 
 		return Html::element(
 			'span',
-			[ 'class' => 'trending-grid__title' ],
+			[ 'class' => 'cdx-card__text__title' ],
 			$text
 		);
 	}

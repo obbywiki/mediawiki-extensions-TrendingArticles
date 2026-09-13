@@ -70,19 +70,12 @@ class Hooks {
 	}
 
 	/**
-	 * count page views using the same hook HitCounters relies on (onPageViewUpdates)
+	 * count page views (onPageViewUpdates)
 	 *
 	 * @param WikiPage $wikiPage
 	 * @param User $user
 	 */
 	public static function onPageViewUpdates( WikiPage $wikiPage, User $user ): void {
-		$services = MediaWikiServices::getInstance();
-		/** @var ExtensionConfig $config */
-		$config = $services->getService( ExtensionConfig::SERVICE_NAME );
-		if ( $config->getDataSource() === 'HitCounters' ) {
-			return;
-		}
-
 		if ( !PageViewCounter::shouldCountPageView( $wikiPage, $user ) ) {
 			return;
 		}
@@ -114,10 +107,10 @@ class Hooks {
 		}
 
 		if ( $title->inNamespace( NS_CATEGORY ) ) {
-			CategoryPopularBlock::registerStyles( $out, $skin );
+			CategoryPopularBlock::registerStyles( $out );
 
 			if ( !CategoryPopularBlock::wasInjected() ) {
-				CategoryPopularBlock::inject( $title, $out, $skin );
+				CategoryPopularBlock::inject( $title, $out );
 			}
 		}
 	}

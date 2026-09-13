@@ -7,16 +7,8 @@ use CategoryPage;
 class TrendingCategoryPage extends CategoryPage {
 	public function closeShowCategory() {
 		$out = $this->getContext()->getOutput();
-		$skin = $this->getContext()->getSkin();
-
-		if ( SkinHelper::isCitizen( $skin ) ) {
-			CategoryPopularBlock::inject( $this->getTitle(), $out, $skin );
-		}
+		CategoryPopularBlock::inject( $this->getTitle(), $out );
 
 		parent::closeShowCategory();
-
-		if ( !SkinHelper::isCitizen( $skin ) ) {
-			CategoryPopularBlock::inject( $this->getTitle(), $out, $skin );
-		}
 	}
 }

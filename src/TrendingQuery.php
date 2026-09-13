@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Trending;
 
-use LogicException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -15,48 +14,34 @@ class TrendingQuery {
 	/**
 	 * @return list<array{title:Title,count:int}>
 	 */
-	public static function getTopPagesInCategory(
-		Title $category,
-		int $limit,
-		string $period = self::PERIOD_ALL
-	): array {
+	public static function getTopPagesInCategory( Title $category, int $limit, string $period = self::PERIOD_ALL ): array {
 		if ( !$category->inNamespace( NS_CATEGORY ) || $limit <= 0 ) {
 			return [];
 		}
-
-		$dataSource = PageViewCounter::getDataSource();
 
 		$services = MediaWikiServices::getInstance();
 		$db_provider = $services->getConnectionProvider();
 		$dbr = $db_provider->getReplicaDatabase();
 
 		$contentNamespaces = $services->getNamespaceInfo()->getContentNamespaces();
+		$is_week = $period === self::PERIOD_WEEK;
 
-		if ( $dataSource === 'HitCounters' ) {
-			if ( !class_exists( \HitCounters\HitCounters::class ) ) {
-				throw new LogicException( 'HitCounters data source selected but HitCounters is not installed.' );
-			}
-
-			$countColumn = 'page_counter';
-			$countJoin = [ 'hit_counter', null, 'page_id = cl_from' ];
-		} elseif ( $period === self::PERIOD_WEEK ) {
-			$countColumn = 'view_count';
+		if ( $is_week ) {
 			$countJoin = [ 'trending_pageview_daily', null, 'tpd_page_id = page_id' ];
 		} else {
-			$countColumn = 'tp_count';
 			$countJoin = [ 'trending_pageview', null, 'tp_page_id = page_id' ];
 		}
 
 		$select = [
 			'page_id',
 			'page_namespace',
-			'page_title',
+			'page_title'
 		];
 
-		if ( $dataSource !== 'HitCounters' && $period === self::PERIOD_WEEK ) {
+		if ( $is_week ) {
 			$select['view_count'] = 'SUM(tpd_count)';
 		} else {
-			$select['view_count'] = $countColumn;
+			$select['view_count'] = 'tp_count';
 		}
 
 		$queryBuilder = $dbr->newSelectQueryBuilder()
@@ -70,7 +55,7 @@ class TrendingQuery {
 			] )
 			->andWhere( $dbr->expr( 'page_namespace', '=', $contentNamespaces ) );
 
-		if ( $dataSource !== 'HitCounters' && $period === self::PERIOD_WEEK ) {
+		if ( $is_week ) {
 			$cutoff_date = substr(
 				wfTimestamp( TS_MW, time() - PageViewCounter::DAILY_RETENTION_DAYS * 86400 ),
 				0,
@@ -109,7 +94,7 @@ class TrendingQuery {
 			}
 
 			$view_count = (int)$row->view_count;
-			if ( $dataSource !== 'HitCounters' && $period === self::PERIOD_WEEK && $view_count < self::MIN_WEEKLY_VIEWS ) {
+			if ( $is_week && $view_count < self::MIN_WEEKLY_VIEWS ) {
 				continue;
 			}
 

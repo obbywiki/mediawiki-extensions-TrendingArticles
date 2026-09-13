@@ -1,0 +1,71 @@
+.trending-grid {
+	margin-block: 1.5rem 2rem;
+}
+
+.trending-grid__heading {
+	margin: 0 0 1rem;
+	padding: 0;
+	border: 0;
+	color: var( --color-emphasized );
+	font-size: var( --font-size-xx-large );
+	font-weight: var( --font-weight-semi-bold );
+	line-height: var( --line-height-xx-large );
+}
+
+.trending-grid__list {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 200px, 1fr ) );
+	gap: 1rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.trending-grid__item {
+	margin: 0;
+	min-width: 0;
+}
+
+.trending-grid .cdx-card {
+	flex-direction: column;
+	align-items: stretch;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
+	min-width: 0;
+	border-radius: var( --border-radius-medium );
+}
+
+.trending-grid .cdx-card,
+.trending-grid .cdx-card:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
+.trending-grid__media {
+	display: block;
+	flex-shrink: 0;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	background-color: var( --background-color-neutral-subtle );
+}
+
+.trending-grid__image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.trending-grid .cdx-card__text {
+	padding: 8px 12px 12px;
+	min-width: 0;
+}
+
+.trending-grid .cdx-card__text__description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
