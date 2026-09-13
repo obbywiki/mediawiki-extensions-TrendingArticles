@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Trending;
 
-use MediaWiki\Html\Html;
+use MediaWiki\Html\TemplateParser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\Sanitizer;
@@ -33,95 +33,44 @@ class CategoryTrendingGridBlock {
 			$page_id = $title->getArticleID();
 			$page_media = $media[$page_id] ?? [];
 
-			$thumb_html = self::renderThumb( $page_media['thumbnail'] ?? null );
-			$body_parts = [ self::renderTitle( $title, $page_media['display_title'] ?? null ) ];
+			$item = [
+				'url' => $title->getLinkURL(),
+				'title' => self::resolveTitleText( $title, $page_media['display_title'] ?? null ),
+			];
 
 			$shortdesc = $page_media['shortdesc'] ?? '';
 			if ( is_string( $shortdesc ) && $shortdesc !== '' ) {
-				$body_parts[] = Html::element(
-					'span',
-					[ 'class' => 'cdx-card__text__description' ],
-					$shortdesc
-				);
+				$item['has_shortdesc'] = true;
+				$item['shortdesc'] = $shortdesc;
 			}
 
-			$card_body = Html::rawElement(
-				'span',
-				[ 'class' => 'cdx-card__text' ],
-				implode( '', $body_parts )
-			);
+			$thumbnail = $page_media['thumbnail'] ?? null;
+			if ( is_array( $thumbnail ) ) {
+				$item['thumbnail'] = [
+					'source' => (string)$thumbnail['source'],
+					'width' => (int)$thumbnail['width'],
+					'height' => (int)$thumbnail['height'],
+				];
+			}
 
-			$items[] = Html::rawElement(
-				'li',
-				[ 'class' => 'trending-grid__item' ],
-				Html::rawElement(
-					'a',
-					[
-						'class' => 'cdx-card cdx-card--is-link trending-grid__card',
-						'href' => $title->getLinkURL(),
-					],
-					$thumb_html . $card_body
-				)
-			);
+			$items[] = $item;
 		}
 
-		$heading = $out->msg( 'trending-category-trending-heading' )->text();
-		return Html::rawElement(
-			'section',
-			[
-				'class' => 'trending-grid',
-				'aria-labelledby' => 'trending-category-trending-heading',
-			],
-			Html::rawElement(
-				'h2',
-				[
-					'id' => 'trending-category-trending-heading',
-					'class' => 'trending-grid__heading',
-				],
-				$heading
-			) .
-			Html::rawElement(
-				'ul',
-				[
-					'class' => 'trending-grid__list',
-					'role' => 'list',
-				],
-				implode( '', $items )
-			)
-		);
+		return self::getTemplateParser()->processTemplate( 'TrendingGrid', [
+			'heading' => $out->msg( 'trending-category-trending-heading' )->text(),
+			'items' => $items,
+		] );
 	}
 
-	/**
-	 * @param array{source:string,width:int,height:int}|null $thumbnail
-	 */
-	private static function renderThumb( ?array $thumbnail ): string {
-		if ( $thumbnail !== null ) {
-			return Html::rawElement(
-				'span',
-				[ 'class' => 'trending-grid__media' ],
-				Html::element( 'img', [
-					'class' => 'trending-grid__image',
-					'src' => (string)$thumbnail['source'],
-					'width' => (string)(int)$thumbnail['width'],
-					'height' => (string)(int)$thumbnail['height'],
-					'alt' => '',
-					'loading' => 'lazy',
-					'decoding' => 'async',
-				] )
-			);
+	private static function getTemplateParser(): TemplateParser {
+		static $template_parser = null;
+		if ( $template_parser === null ) {
+			$template_parser = new TemplateParser( dirname( __DIR__ ) . '/templates' );
 		}
-
-		return Html::element(
-			'span',
-			[
-				'class' => 'trending-grid__media trending-grid__media--placeholder',
-				'aria-hidden' => 'true',
-			],
-			''
-		);
+		return $template_parser;
 	}
 
-	private static function renderTitle( Title $title, ?string $display_title ): string {
+	private static function resolveTitleText( Title $title, ?string $display_title ): string {
 		$text = $title->getText();
 
 		if ( is_string( $display_title ) && $display_title !== '' ) {
@@ -131,10 +80,6 @@ class CategoryTrendingGridBlock {
 			}
 		}
 
-		return Html::element(
-			'span',
-			[ 'class' => 'cdx-card__text__title' ],
-			$text
-		);
+		return $text;
 	}
 }

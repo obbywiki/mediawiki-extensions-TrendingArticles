@@ -1,0 +1,25 @@
+<section class="trending-grid" aria-labelledby="trending-category-trending-heading">
+	<h2 id="trending-category-trending-heading" class="trending-grid__heading">{{heading}}</h2>
+	<ul class="trending-grid__list" role="list">
+		{{#items}}
+		<li class="trending-grid__item">
+			<a class="cdx-card cdx-card--is-link trending-grid__card" href="{{url}}">
+				{{#thumbnail}}
+				<span class="trending-grid__media">
+					<img class="trending-grid__image" src="{{source}}" width="{{width}}" height="{{height}}" alt="" loading="lazy" decoding="async">
+				</span>
+				{{/thumbnail}}
+				{{^thumbnail}}
+				<span class="trending-grid__media trending-grid__media--placeholder" aria-hidden="true"></span>
+				{{/thumbnail}}
+				<span class="cdx-card__text">
+					<span class="cdx-card__text__title">{{title}}</span>
+					{{#has_shortdesc}}
+					<span class="cdx-card__text__description">{{shortdesc}}</span>
+					{{/has_shortdesc}}
+				</span>
+			</a>
+		</li>
+		{{/items}}
+	</ul>
+</section>
