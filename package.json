@@ -1,6 +1,6 @@
 {
   "name": "mediawiki-extensions-Trending",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Implements trending articles.",
   "main": "index.js",
   "scripts": {

@@ -6,23 +6,19 @@
 		"[https://wolfite.dev Wolfite]",
 		"[https://obby.wiki The Obby Wiki]"
 	],
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"license-name": "GPL-3.0-or-later",
 	"url": "https://github.com/wikux/mediawiki-extensions-TrendingArticles",
-
 	"type": "variable",
-
 	"requires": {
 		"MediaWiki": ">=1.46.0"
 	},
-
 	"suggests": {
 		"extensions": {
 			"PageImages": "*",
 			"ShortDescription": "*"
 		}
 	},
-
 	"AutoloadClasses": {
 		"MediaWiki\\Extension\\Trending\\Hooks": "src/Hooks.php",
 		"MediaWiki\\Extension\\Trending\\ExtensionConfig": "src/ExtensionConfig.php",
@@ -35,20 +31,16 @@
 		"MediaWiki\\Extension\\Trending\\TrendingPageMedia": "src/TrendingPageMedia.php",
 		"MediaWiki\\Extension\\Trending\\TrendingCategoryPage": "src/TrendingCategoryPage.php"
 	},
-
 	"ServiceWiringFiles": [
 		"src/ServiceWiring.php"
 	],
-
 	"MessagesDirs": {
 		"Trending": "i18n"
 	},
-
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
 		"remoteExtPath": "Trending"
 	},
-
 	"ResourceModules": {
 		"ext.trending.grid.styles": {
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
@@ -59,7 +51,6 @@
 			]
 		}
 	},
-
 	"Hooks": {
 		"ArticleFromTitle": "MediaWiki\\Extension\\Trending\\Hooks::onArticleFromTitle",
 		"BeforePageDisplay": "MediaWiki\\Extension\\Trending\\Hooks::onBeforePageDisplay",
@@ -69,7 +60,6 @@
 		"SkinAddFooterLinks": "MediaWiki\\Extension\\Trending\\Hooks::onSkinAddFooterLinks",
 		"SkinTemplateNavigation::Universal": "MediaWiki\\Extension\\Trending\\Hooks::onSkinTemplateNavigation__Universal"
 	},
-
 	"config": {
 		"TrendingCategoryLimit": {
 			"value": 6,
