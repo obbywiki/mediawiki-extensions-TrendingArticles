@@ -6,7 +6,7 @@
 		"[https://wolfite.dev Wolfite]",
 		"[https://obby.wiki The Obby Wiki]"
 	],
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"license-name": "GPL-3.0-or-later",
 	"url": "https://github.com/wikux/mediawiki-extensions-TrendingArticles",
 	"type": "variable",

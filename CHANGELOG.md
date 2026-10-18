@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/compare/v0.2.0...v0.2.1) (2026-10-18)
+
+
+### Miscellaneous Chores
+
+* update FUNDING ([f7748c7](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/commit/f7748c7e42e5d743f2a30595fa082713553b91c8))
+
 ## [0.2.0](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/compare/v0.1.0...v0.2.0) (2026-09-13)
 
 
