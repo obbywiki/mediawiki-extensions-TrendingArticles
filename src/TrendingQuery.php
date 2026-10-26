@@ -25,8 +25,20 @@ class TrendingQuery {
 
 		$contentNamespaces = $services->getNamespaceInfo()->getContentNamespaces();
 		$is_week = $period === self::PERIOD_WEEK;
+		$analytics = !PageViewCounter::usesOriginHits();
+		$source = null;
+		$latestDate = null;
+		if ( $analytics ) {
+			$source = $services->getService( 'TrendingAnalyticsProvider' )->getKey();
+			$latestDate = $services->getService( 'TrendingAnalyticsStore' )->getLatestDate( $source );
+			if ( $latestDate === null ) {
+				return [];
+			}
+		}
 
-		if ( $is_week ) {
+		if ( $analytics ) {
+			$countJoin = [ 'trending_analytics_daily', null, 'tad_page_id = page_id' ];
+		} elseif ( $is_week ) {
 			$countJoin = [ 'trending_pageview_daily', null, 'tpd_page_id = page_id' ];
 		} else {
 			$countJoin = [ 'trending_pageview', null, 'tp_page_id = page_id' ];
@@ -38,7 +50,9 @@ class TrendingQuery {
 			'page_title'
 		];
 
-		if ( $is_week ) {
+		if ( $analytics ) {
+			$select['view_count'] = 'SUM(tad_count)';
+		} elseif ( $is_week ) {
 			$select['view_count'] = 'SUM(tpd_count)';
 		} else {
 			$select['view_count'] = 'tp_count';
@@ -55,7 +69,18 @@ class TrendingQuery {
 			] )
 			->andWhere( $dbr->expr( 'page_namespace', '=', $contentNamespaces ) );
 
-		if ( $is_week ) {
+		if ( $analytics ) {
+			$queryBuilder->andWhere( [ 'tad_source' => $source ] )
+				->groupBy( [ 'page_id', 'page_namespace', 'page_title' ], __METHOD__ );
+		}
+		if ( $is_week && $analytics ) {
+			// Anchor to the latest successful day so an outage preserves the last report.
+			$latest = \DateTimeImmutable::createFromFormat( '!Ymd', $latestDate, new \DateTimeZone( 'UTC' ) );
+			$cutoff = $latest->modify( '-6 days' )->format( 'Ymd' );
+			$queryBuilder->andWhere( $dbr->expr( 'tad_date', '>=', $cutoff ) )
+				->andWhere( $dbr->expr( 'tad_date', '<=', $latestDate ) )
+				->having( 'SUM(tad_count) >= ' . self::MIN_WEEKLY_VIEWS );
+		} elseif ( $is_week ) {
 			$cutoff_date = substr(
 				wfTimestamp( TS_MW, time() - PageViewCounter::DAILY_RETENTION_DAYS * 86400 ),
 				0,

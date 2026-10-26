@@ -13,6 +13,11 @@ use Wikimedia\Rdbms\DBError;
 class PageViewCounter {
 	public const DAILY_RETENTION_DAYS = 7;
 
+	/** Whether origin requests are the explicitly selected view source. */
+	public static function usesOriginHits(): bool {
+		return MediaWikiServices::getInstance()->getMainConfig()->get( 'TrendingPageViewSource' ) === 'hits';
+	}
+
 	/**
 	 * returns the stored view count for a title
 	 */
@@ -24,6 +29,12 @@ class PageViewCounter {
 		}
 
 		$services = MediaWikiServices::getInstance();
+		if ( !self::usesOriginHits() ) {
+			return $services->getService( 'TrendingAnalyticsStore' )->getPageCount(
+				$services->getService( 'TrendingAnalyticsProvider' )->getKey(), $pageId
+			);
+		}
+
 		$db_provider = $services->getConnectionProvider();
 		$dbr = $db_provider->getReplicaDatabase();
 
@@ -54,7 +65,7 @@ class PageViewCounter {
 	 * upsert a page view increment (uses onTransactionCommitOrIdle for SQLite)
 	 */
 	public static function persistIncrement( int $page_id ): void {
-		if ( $page_id <= 0 ) {
+		if ( $page_id <= 0 || !self::usesOriginHits() ) {
 			return;
 		}
 
@@ -119,6 +130,7 @@ class PageViewCounter {
 		try {
 			$dbw->delete( 'trending_pageview', [ 'tp_page_id' => $page_id ], $fname );
 			$dbw->delete( 'trending_pageview_daily', [ 'tpd_page_id' => $page_id ], $fname );
+			$dbw->delete( 'trending_analytics_daily', [ 'tad_page_id' => $page_id ], $fname );
 		} catch ( DBError $e ) {
 			MWExceptionHandler::logException( $e );
 		}
@@ -162,6 +174,9 @@ class PageViewCounter {
 	 * determines whether or not to count a page view
 	 */
 	public static function shouldCountPageView( WikiPage $wikiPage, User $user ): bool {
+		if ( !self::usesOriginHits() ) {
+			return false;
+		}
 		if ( !$wikiPage->exists() ) {
 			return false;
 		}

@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Trending;
 
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Logging\ManualLogEntry;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Page\WikiPage;
@@ -13,7 +13,6 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
-use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\User\User;
 use Skin;
 use SkinTemplate;
@@ -26,6 +25,8 @@ class Hooks {
 		$dir = __DIR__ . '/../sql';
 		$updater->addExtensionTable( 'trending_pageview', "$dir/trending_pageview.sql" );
 		$updater->addExtensionTable( 'trending_pageview_daily', "$dir/trending_pageview_daily.sql" );
+		$updater->addExtensionTable( 'trending_analytics_daily', "$dir/trending_analytics_daily.sql" );
+		$updater->addExtensionTable( 'trending_analytics_import', "$dir/trending_analytics_import.sql" );
 		$updater->addExtensionUpdate( [ self::class . '::onSchemaUpdatePruneDailyCounts' ] );
 	}
 

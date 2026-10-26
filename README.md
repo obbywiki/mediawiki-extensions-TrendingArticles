@@ -59,3 +59,21 @@ Then navigate to any category it is in.
 # Experimental Disclaimer
 
 View counting may be off. This extension is experimental. Install PageImages and ShortDescription for the intended thumbnail and description experience.
+
+## Development checks
+
+Tests follow the MediaWiki test suite conventions: `tests/phpunit/Unit` uses
+`MediaWikiUnitTestCase`, and `tests/phpunit/Integration` uses
+`MediaWikiIntegrationTestCase` with the test database. MediaWiki provides the
+bootstrap, PHPUnit dependency, and test isolation.
+
+When installed as `extensions/TrendingArticles` in a development wiki:
+
+```sh
+composer install
+composer test
+composer phpunit
+```
+
+CI runs the PHP suite through the shared StarCitizenTools MediaWiki workflow on
+MediaWiki 1.46 with PHP 8.3 and 8.5, plus an experimental MediaWiki master job.

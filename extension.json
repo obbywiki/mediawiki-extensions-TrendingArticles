@@ -34,6 +34,9 @@
 	"ServiceWiringFiles": [
 		"src/ServiceWiring.php"
 	],
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Trending\\Analytics\\": "src/Analytics/"
+	},
 	"MessagesDirs": {
 		"Trending": "i18n"
 	},
@@ -61,6 +64,14 @@
 		"SkinTemplateNavigation::Universal": "MediaWiki\\Extension\\Trending\\Hooks::onSkinTemplateNavigation__Universal"
 	},
 	"config": {
+		"TrendingPageViewSource": {
+			"value": "hits",
+			"description": "Authoritative view source: hits (legacy origin counting), swetrix, or a custom TrendingAnalyticsProvider service. Never switches automatically on import failure."
+		},
+		"TrendingSwetrix": {
+			"value": {},
+			"description": "Server-side Swetrix statistics settings: apiBase (before /v2), projectId, hostname, apiKey. Requires Statistics API v2 and Extension:Swetrix /Page_Name tracking."
+		},
 		"TrendingCategoryLimit": {
 			"value": 6,
 			"description": "Maximum number of trending pages to show on category pages."
