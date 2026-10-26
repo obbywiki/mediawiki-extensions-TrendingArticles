@@ -28,6 +28,12 @@ class SwetrixProvider implements PageViewProvider {
 		if ( !filter_var( $apiBase, FILTER_VALIDATE_URL ) || !in_array( parse_url( $apiBase, PHP_URL_SCHEME ), [ 'https', 'http' ], true ) || parse_url( $apiBase, PHP_URL_QUERY ) !== null || parse_url( $apiBase, PHP_URL_FRAGMENT ) !== null || $projectId === '' || $hostname === '' ) {
 			throw new InvalidArgumentException( 'Configure the Swetrix API base, project ID, and hostname.' );
 		}
+		$host = strtolower( parse_url( $apiBase, PHP_URL_HOST ) );
+		if ( parse_url( $apiBase, PHP_URL_SCHEME ) === 'http' &&
+			!in_array( $host, [ 'localhost', '127.0.0.1', '[::1]' ], true )
+		) {
+			throw new InvalidArgumentException( 'The Swetrix API base must use HTTPS unless it is a loopback endpoint.' );
+		}
 	}
 
 	/** @inheritDoc */

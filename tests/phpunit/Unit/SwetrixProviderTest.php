@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace MediaWiki\Extension\Trending\Tests\Unit;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\Trending\Analytics\SwetrixProvider;
 use MediaWikiUnitTestCase;
 use RuntimeException;
@@ -12,6 +13,45 @@ use RuntimeException;
  * @covers \MediaWiki\Extension\Trending\Analytics\SwetrixProvider
  */
 class SwetrixProviderTest extends MediaWikiUnitTestCase {
+
+	/** @dataProvider provide_remote_http_api_bases */
+	public function test_rejects_remote_http_before_requesting_statistics( string $api_base ): void {
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'must use HTTPS' );
+		new SwetrixProvider( $api_base, 'project', 'wiki.example', function () {
+			$this->fail( 'An insecure API base must be rejected before making any request.' );
+		} );
+	}
+
+	public static function provide_remote_http_api_bases(): array {
+		return [
+			'remote hostname' => [ 'http://stats.example/backend' ],
+			'private network' => [ 'http://192.168.1.10/backend' ],
+			'localhost suffix' => [ 'http://localhost.example/backend' ],
+			'loopback suffix' => [ 'http://127.0.0.1.example/backend' ],
+		];
+	}
+
+	/** @dataProvider provide_local_http_api_bases */
+	public function test_allows_local_http_statistics_requests( string $api_base ): void {
+		$requested_url = null;
+		$provider = new SwetrixProvider( $api_base, 'project', 'wiki.example',
+			static function ( string $url ) use ( &$requested_url ): array {
+				$requested_url = $url;
+				return [ 'data' => [], 'meta' => [ 'total' => 0 ] ];
+			}
+		);
+		$this->assertSame( [], $provider->fetchDailyViews( '2026-10-20' ) );
+		$this->assertStringStartsWith( $api_base . '/v2/projects/', $requested_url );
+	}
+
+	public static function provide_local_http_api_bases(): array {
+		return [
+			'localhost' => [ 'http://localhost:8080/backend' ],
+			'IPv4 loopback' => [ 'http://127.0.0.1:8080/backend' ],
+			'IPv6 loopback' => [ 'http://[::1]:8080/backend' ],
+		];
+	}
 
 	public function test_pagination_uses_pageviews_and_scopes_day_host_and_action(): void {
 		$requests = [];
