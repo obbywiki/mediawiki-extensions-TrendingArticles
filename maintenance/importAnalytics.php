@@ -10,7 +10,7 @@ use Throwable;
 $installPath = getenv( 'MW_INSTALL_PATH' ) ?: __DIR__ . '/../../..';
 require_once "$installPath/maintenance/Maintenance.php";
 
-// should be run hourly from cron (supports historical backfills)
+/** Should be run hourly from cron (supports historical backfills). */
 class ImportAnalytics extends Maintenance {
 
 	public function __construct() {

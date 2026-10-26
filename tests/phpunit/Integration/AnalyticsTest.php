@@ -12,6 +12,7 @@ use MediaWiki\Extension\Trending\TrendingQuery;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
  * @group TrendingArticles
@@ -27,6 +28,21 @@ class AnalyticsTest extends MediaWikiIntegrationTestCase {
 	private WikiPage $page;
 	private string $source;
 	private string $today;
+
+	/** @inheritDoc */
+	protected function getSchemaOverrides( IMaintainableDatabase $db ): array {
+		// CI installs core before loading the extension, so these tables may not exist yet.
+		$tables = [
+			'trending_pageview',
+			'trending_pageview_daily',
+			'trending_analytics_daily',
+			'trending_analytics_import',
+		];
+		return [
+			'scripts' => array_map( static fn ( string $table ) => __DIR__ . '/../../../sql/' . $table . '.sql', $tables ),
+			'create' => $tables,
+		];
+	}
 
 	protected function setUp(): void {
 		parent::setUp();

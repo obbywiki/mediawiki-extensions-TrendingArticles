@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Trending\Analytics;
 
-// a complete daily snapshot of pageviews, never visits or unique visitors
+/** A complete daily snapshot of pageviews, never visits or unique visitors. */
 interface PageViewProvider {
 
 	/** @return string a stable identity including the backend, project, and wiki */

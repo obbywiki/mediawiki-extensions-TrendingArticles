@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Trending\Analytics;
 use InvalidArgumentException;
 use Wikimedia\Rdbms\IConnectionProvider;
 
-// imported history is separate from origin counters and is retained for lifetime totals
+/** Imported history is separate from origin counters and is retained for lifetime totals. */
 class AnalyticsStore {
 
 	public function __construct( private readonly IConnectionProvider $connections ) {

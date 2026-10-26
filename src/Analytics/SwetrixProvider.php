@@ -7,7 +7,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use RuntimeException;
 
-// reads the stats API v2 and the /Page_Name paths emitted by Extension:Swetrix
+/** Reads the stats API v2 and the /Page_Name paths emitted by Extension:Swetrix. */
 class SwetrixProvider implements PageViewProvider {
 
 	private const PAGE_SIZE = 100;
