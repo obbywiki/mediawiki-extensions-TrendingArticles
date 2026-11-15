@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/compare/v0.2.0...v0.3.0) (2026-10-26)
+
+
+### Features
+
+* swetrix + analytics provider support ([#6](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/issues/6)) ([aa0fd10](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/commit/aa0fd10af456e5bd1429d028f39d976d09c90f38))
+
+
+### Miscellaneous Chores
+
+* update FUNDING ([f7748c7](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/commit/f7748c7e42e5d743f2a30595fa082713553b91c8))
+
 ## [0.2.0](https://github.com/obbywiki/mediawiki-extensions-TrendingArticles/compare/v0.1.0...v0.2.0) (2026-09-13)
 
 
